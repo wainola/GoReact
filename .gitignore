@@ -95,6 +95,8 @@ typings/
 # dotenv environment variables file
 .env
 
+./config
+
 
 
 # End of https://www.gitignore.io/api/go,node,linux,godot
