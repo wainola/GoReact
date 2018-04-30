@@ -44,7 +44,7 @@ func init() {
 	fmt.Println("Conexion exitosa a MySQL")
 }
 
-// get all employees limit 100
+// HTTP GET -> todos los empleados limit 100
 func GetEmployees(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	var emp_no int64
@@ -90,6 +90,9 @@ func GetEmployees(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
-	//log.Println(emps[0])
+}
+
+// HTTP POST -> añadir nuevo empleado
+func PostEmployees(w http.ResponseWriter, r *http.Request) {
 
 }
