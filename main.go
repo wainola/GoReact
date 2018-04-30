@@ -32,7 +32,7 @@ type employees struct {
 	hireDate  time.Time
 }
 
-// api endpoint test
+// api endpoint para testeos
 func GetApi(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Api endpoint")
 }
