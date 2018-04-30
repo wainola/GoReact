@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/wainola/GoReact/types"
 )
 
 // variable de configuracion para credenciales de la DB
@@ -58,47 +60,36 @@ func GetEmployees(w http.ResponseWriter, r *http.Request) {
 		log.Println(e)
 		return
 	}
-	// type Empleado struct {
-	// 	Name     string `json:"name"`
-	// 	LastName string `json:"lastName"`
-	// }
-	//var emps []types.Empleados
-	//emps := make([]employees, 0)
+	var emps []types.Empleados
 	for rows.Next() {
 		err := rows.Scan(&emp_no, &birth_date, &name, &lastName, &gender, &hire_date)
 		if err != nil {
 			log.Println(err)
 		}
 		log.Println(emp_no, string(birth_date[:]), name, lastName, string(gender[:]), string(hire_date[:]))
-		layout := "01-01-2006"
-		date1, err := time.Parse(layout, string(birth_date[:]))
-		if err != nil {
-			panic(err)
+		layout := "2006-01-02"
+		b_date, _ := time.Parse(layout, string(birth_date[:]))
+		h_date, _ := time.Parse(layout, string(hire_date[:]))
+		e_no := int64(emp_no)
+		gen := string(gender[:])
+		e := types.Empleados{
+			EmpNo:     e_no,
+			BirthDate: b_date,
+			FirstName: name,
+			LastName:  lastName,
+			Gender:    gen,
+			HireDate:  h_date,
 		}
-		log.Println(date1)
-		//json.NewEncoder(w).Encode(map[string]string{"nombre": name, "apellido": lastName})
-		// e := types.Empleados{
-		// 	EmpNo:     emp_no,
-		// 	BirthDate: birth_date,
-		// 	FirstName: name,
-		// 	LastName:  lastName,
-		// 	Gender:    gender,
-		// 	HireDate:  hire_date,
-		// }
-		//log.Println(e)
-		//j, err := json.Marshal(map[string]string{"name": name, "lastName": lastName})
-		//log.Println(string(j[:]))
-		//emps = append(emps, e)
+		log.Println(e)
+		emps = append(emps, e)
 	}
-	// w.Header().Set("Content-Type", "application/json")
-	// j, err := json.Marshal(emps)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// w.WriteHeader(http.StatusOK)
-	// log.Println(emps)
-	// log.Println(j)
-	// w.Write(j)
+	w.Header().Set("Content-Type", "application/json")
+	j, err := json.Marshal(emps)
+	if err != nil {
+		panic(err)
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
 	//log.Println(emps[0])
 
 }

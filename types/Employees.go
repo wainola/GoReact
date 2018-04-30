@@ -7,6 +7,6 @@ type Empleados struct {
 	BirthDate time.Time `json:"BirthDate"`
 	FirstName string    `json:"FirstName"`
 	LastName  string    `json:"LastName"`
-	Gender    rune      `json:"Gender"`
+	Gender    string    `json:"Gender"`
 	HireDate  time.Time `json:"HireDate"`
 }
