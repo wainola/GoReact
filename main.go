@@ -13,16 +13,12 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// variable de configuracion para credenciales de la DB
 var configDb map[string]interface{}
-
-type Config struct {
-	User     string `json:"user"`
-	Password string `json:"password"`
-}
-
 var db *sql.DB
 var err error
 
+// struct employees => TODO: moverlo a un directorio de structs
 type employees struct {
 	empNo     int64
 	birthDate time.Time
@@ -48,16 +44,23 @@ func GetEmployees(w http.ResponseWriter, r *http.Request) {
 		log.Println(e)
 		return
 	}
-	emps := make([]employees, 0)
+	var emps []interface{}
+	//emps := make([]employees, 0)
 	for rows.Next() {
 		err := rows.Scan(&name, &lastName)
 		if err != nil {
 			log.Println(err)
 		}
-		log.Println(name, lastName)
-		json.NewEncoder(w).Encode(map[string]string{"nombre": name, "apellido": lastName})
+		//log.Println(name, lastName)
+		//json.NewEncoder(w).Encode(map[string]string{"nombre": name, "apellido": lastName})
+		j, err := json.Marshal(map[string]string{"name": name, "lastName": lastName})
+		log.Println(string(j[:]))
+		emps = append(emps, j)
 	}
-	log.Println(emps)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	// w.Write(emps)
+	//log.Println(emps[0])
 
 }
 
@@ -70,10 +73,14 @@ func init() {
 	if err := json.Unmarshal(config, &configDb); err != nil {
 		panic(err)
 	}
-	fmt.Println(configDb)
+	fmt.Println(&configDb)
+
+	conn := fmt.Sprintf("%s:%s@/employees", configDb["user"], configDb["password"])
+
+	fmt.Printf("Cadena de conexion es: %s", conn)
 
 	// iniciando conexion a db
-	db, err = sql.Open("mysql", "nrriquel:Nrriquel1987@/employees")
+	db, err = sql.Open("mysql", conn)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -81,6 +88,7 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	fmt.Println("Conexion exitosa a MySQL")
 }
 
 func main() {

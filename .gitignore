@@ -2,6 +2,7 @@
 # Created by https://www.gitignore.io/api/go,node,linux,godot
 
 config/
+tmp/
 
 ### Go ###
 # Binaries for programs and plugins
