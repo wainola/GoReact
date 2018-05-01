@@ -95,6 +95,7 @@ func GetEmployees(w http.ResponseWriter, r *http.Request) {
 
 // HTTP POST -> añadir nuevo empleado
 func PostEmployees(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.Method)
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		panic(err)
