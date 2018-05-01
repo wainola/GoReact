@@ -10,7 +10,6 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/gorilla/mux"
 	"github.com/wainola/GoReact/types"
 )
 
@@ -96,6 +95,9 @@ func GetEmployees(w http.ResponseWriter, r *http.Request) {
 
 // HTTP POST -> añadir nuevo empleado
 func PostEmployees(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	fmt.Println(vars)
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(body[:]))
 }
