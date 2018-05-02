@@ -95,10 +95,38 @@ func GetEmployees(w http.ResponseWriter, r *http.Request) {
 
 // HTTP POST -> añadir nuevo empleado
 func PostEmployees(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.Method)
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err)
+	log.Println(r.Method)
+	// Chequeo si el metodo es post para poder hacer la insercion
+	if r.Method == "POST" {
+		defer db.Close()
+		// last_emp_no para insertar el ultimo empleado con su id correcto
+		var last_emp_no int64
+		fila, e := db.Query(`select emp_no from employees order by emp_no desc limit 1`)
+		if e != nil {
+			panic(e)
+		}
+		for fila.Next() {
+			err := fila.Scan(&last_emp_no)
+			if err != nil {
+				log.Fatal("Hay un error!")
+				panic(err)
+			}
+			log.Println("Last emp_no es...")
+			log.Println(last_emp_no + 1)
+		}
+		// leyendo el body del request para poder ingresar el empleado
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			panic(err)
+		}
+		log.Println(string(body[:]))
+	} else {
+		d := map[string]string{"msg": "wrong method!"}
+		j, err := json.Marshal(d)
+		if err != nil {
+			panic(err)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(j)
 	}
-	fmt.Println(string(body[:]))
 }
